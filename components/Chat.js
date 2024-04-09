@@ -4,7 +4,8 @@ import { Bubble, GiftedChat } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
   // Destructuring 'name' from route params
-  const { name } = route.params;
+  const { name, background } = route.params;
+
   
   // State to manage chat messages
   const [messages, setMessages] = useState([]);
@@ -56,7 +57,7 @@ const Chat = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: background}]}>
       {/* GiftedChat component for displaying chat interface */}
       <GiftedChat
         messages={messages}
@@ -78,5 +79,6 @@ const styles = StyleSheet.create({
     flex: 1, // Take up entire available space
   },
 });
+  
 
 export default Chat; // Exporting the Chat component
