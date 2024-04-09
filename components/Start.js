@@ -1,16 +1,23 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity } from 'react-native';  
 
 const Start = ({ navigation }) => {
+  // State variables for user's name and selected background color
   const [name, setName] = useState('');
   const [background, setBackground] = useState('');
+  
+  // Image background for the Start screen
   const image = require('../img/BackgroundImage.png');
 
   return (
     <View style={styles.container}>
+      {/* Image background for the Start screen */}
       <ImageBackground source={image} style={styles.imageBackground} resizeMode='cover'>
+        {/* Title of the app */}
         <Text style={styles.title}>Chat App</Text>
+        {/* Container for input fields and buttons */}
         <View style={styles.whiteContainer}>
+          {/* Input field for user's name */}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.textInput}
@@ -19,8 +26,11 @@ const Start = ({ navigation }) => {
               placeholder='Your name'
             />
           </View>
+          {/* Text indicating to choose background color */}
           <Text style={styles.backgroundText}>Choose Background Color</Text>
+          {/* Container for selecting background colors */}
           <View style={styles.colorContainer}>
+            {/* Color options as touchable components */}
             <TouchableOpacity
               style={[styles.color, { backgroundColor: '#090C08' }]}
               onPress={() => setBackground('#090C08')}
@@ -38,6 +48,7 @@ const Start = ({ navigation }) => {
               onPress={() => setBackground('#B9C6AE')}
             />
           </View>
+          {/* Button to start chatting */}
           <TouchableOpacity 
             style={styles.startChattingButton}
             onPress={() => navigation.navigate('Chat', { name: name, background: background })}
@@ -50,6 +61,7 @@ const Start = ({ navigation }) => {
   );
 }
 
+// Styles for the Start component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -129,4 +141,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Start;
+export default Start; // Exporting the Start component
