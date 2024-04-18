@@ -1,11 +1,27 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity } from 'react-native';  
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Alert } from 'react-native';  
+import { getAuth, signInAnonymously } from "firebase/auth"; // Import from Firebase Authentication
 
 const Start = ({ navigation }) => {
-  // State variables for user's name and selected background color
-  const [name, setName] = useState('');
-  const [background, setBackground] = useState('');
+  const auth = getAuth(); // Get authentication instance
   
+  const [name, setName] = useState(''); // State variable for user's name
+  const [background, setBackground] = useState(''); // State variable for background color
+
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then(result => {
+        navigation.navigate("Chat", 
+        {name: name,
+         background: background,
+         userID: result.user.uid });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, please try again later.");
+      })
+  }
+
   // Image background for the Start screen
   const image = require('../img/BackgroundImage.png');
 
@@ -51,7 +67,7 @@ const Start = ({ navigation }) => {
           {/* Button to start chatting */}
           <TouchableOpacity 
             style={styles.startChattingButton}
-            onPress={() => navigation.navigate('Chat', { name: name, background: background })}
+            onPress={signInUser} // Use signInUser function to sign in anonymously
           >
             <Text style={styles.buttonText}>Start Chatting</Text>
           </TouchableOpacity>
@@ -76,13 +92,13 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   whiteContainer: {
-    width: '88%',
-    height: '44%',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    bottom: 0,
-    alignItems: 'center',
-    marginBottom: 30
+    width: "88%",
+    height: "44%",
+    backgroundColor: "white",
+    alignItems: "center",
+    marginBottom: 20,
+    justifyContent: "space-evenly",
+    borderRadius: 4,
   },
   title: {
     padding: '25%',
