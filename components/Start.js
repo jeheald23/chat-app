@@ -92,13 +92,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   whiteContainer: {
-    width: "88%",
-    height: "44%",
+    height: "500px",
     backgroundColor: "white",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 30,
     justifyContent: "space-evenly",
-    borderRadius: 4,
   },
   title: {
     padding: '25%',

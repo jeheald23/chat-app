@@ -1,20 +1,21 @@
-// import the screens
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNetInfo } from "@react-native-community/netinfo";
+import { initializeApp } from "firebase/app";
+import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
+import { Alert } from "react-native";
+
+// Import screens
 import Start from './components/Start';
 import Chat from './components/Chat';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react'; // Import React
-
-// Create the navigator
 const Stack = createNativeStackNavigator();
 
-// Import Firebase
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-
 const App = () => {
-  // Your web app's Firebase configuration
+  const connectionStatus = useNetInfo();
+
+  //Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAbxgrgnJG_7KYpZfsFvSYn31kY9UTnCuI",
     authDomain: "chat-app-d848a.firebaseapp.com",
@@ -27,22 +28,23 @@ const App = () => {
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
 
-  // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
+
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Start"
-      >
-        <Stack.Screen
-          name="Start"
-          component={Start}
-        />
-        <Stack.Screen
-          name="Chat"
-        >
-          {props => <Chat {...props} db={db} />}
+      <Stack.Navigator initialRouteName="Start">
+        <Stack.Screen name="Start" component={Start} />
+        <Stack.Screen name="Chat">
+          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
