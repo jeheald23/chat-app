@@ -5,6 +5,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 import { Alert } from "react-native";
+import { getStorage } from "firebase/storage";
 
 // Import screens
 import Start from './components/Start';
@@ -30,6 +31,11 @@ const App = () => {
 
   const db = getFirestore(app);
 
+  // Initialize Firebase Storage handler
+  const storage = getStorage(app);
+
+
+
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
       Alert.alert("Connection lost!");
@@ -44,7 +50,12 @@ const App = () => {
       <Stack.Navigator initialRouteName="Start">
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat">
-          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
+          {props => <Chat
+          isConnected={connectionStatus.isConnected}
+          db={db}
+          storage={storage} // Pass 'storage' as a prop to Chat
+          {...props}
+          />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
