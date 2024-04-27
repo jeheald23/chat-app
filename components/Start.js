@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Alert } from 'react-native';  
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Alert, Platform, KeyboardAvoidingView } from 'react-native';  
 import { getAuth, signInAnonymously } from "firebase/auth"; // Import from Firebase Authentication
 
 const Start = ({ navigation }) => {
@@ -26,45 +26,46 @@ const Start = ({ navigation }) => {
   const image = require('../img/BackgroundImage.png');
 
   return (
-    <View style={styles.container}>
-      {/* Image background for the Start screen */}
-      <ImageBackground source={image} style={styles.imageBackground} resizeMode='cover'>
-        {/* Title of the app */}
-        <Text style={styles.title}>Chat App</Text>
-        {/* Container for input fields and buttons */}
-        <View style={styles.whiteContainer}>
-          {/* Input field for user's name */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              value={name}
-              onChangeText={setName}
-              placeholder='Your name'
-            />
-          </View>
-          {/* Text indicating to choose background color */}
-          <Text style={styles.backgroundText}>Choose Background Color</Text>
-          {/* Container for selecting background colors */}
-          <View style={styles.colorContainer}>
-            {/* Color options as touchable components */}
-            <TouchableOpacity
-              style={[styles.color, { backgroundColor: '#090C08' }]}
-              onPress={() => setBackground('#090C08')}
-            />
-            <TouchableOpacity
-              style={[styles.color, { backgroundColor: '#474056' }]}
-              onPress={() => setBackground('#474056')}
-            />
-            <TouchableOpacity
-              style={[styles.color, { backgroundColor: '#8A95A5' }]}
-              onPress={() => setBackground('#8A95A5')}
-            />
-            <TouchableOpacity
-              style={[styles.color, { backgroundColor: '#B9C6AE' }]}
-              onPress={() => setBackground('#B9C6AE')}
-            />
-          </View>
-          {/* Button to start chatting */}
+      <View style={styles.container}>
+        {/* Image background for the Start screen */}
+        <ImageBackground source={image} style={styles.imageBackground} resizeMode='cover'>
+          {/* Title of the app */}
+          <Text style={styles.title}>Chat App</Text>
+          {/* Container for input fields and buttons */}
+          <View style={styles.whiteContainer}>
+            {/* Input field for user's name */}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                value={name}
+                onChangeText={setName}
+                placeholder='Your name'
+              />
+            </View>
+            {/* Text indicating to choose background color */}
+            <Text style={styles.backgroundText}>Choose Background Color</Text>
+            {/* Container for selecting background colors */}
+            <View style={styles.colorContainer}>
+              {/* Color options as touchable components */}
+              <TouchableOpacity
+                style={[styles.color, { backgroundColor: '#090C08' }]}
+                onPress={() => setBackground('#090C08')}
+              />
+              <TouchableOpacity
+                style={[styles.color, { backgroundColor: '#474056' }]}
+                onPress={() => setBackground('#474056')}
+              />
+              <TouchableOpacity
+                style={[styles.color, { backgroundColor: '#8A95A5' }]}
+                onPress={() => setBackground('#8A95A5')}
+              />
+              <TouchableOpacity
+                style={[styles.color, { backgroundColor: '#B9C6AE' }]}
+                onPress={() => setBackground('#B9C6AE')}
+              />
+            </View>
+            
+             {/* Button to start chatting */}
           <TouchableOpacity 
             style={styles.startChattingButton}
             onPress={signInUser} // Use signInUser function to sign in anonymously
@@ -72,6 +73,7 @@ const Start = ({ navigation }) => {
             <Text style={styles.buttonText}>Start Chatting</Text>
           </TouchableOpacity>
         </View>
+        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </ImageBackground>
     </View>
   );
@@ -92,10 +94,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   whiteContainer: {
-    height: "500px",
+    height: "44%",
+    width: "88%",
     backgroundColor: "white",
     alignItems: "center",
-    marginBottom: 30,
     justifyContent: "space-evenly",
   },
   title: {
@@ -110,7 +112,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
     color: '#757083',
-    marginLeft: 10
+    marginLeft: 10,
+    width: "88%",
   },
   inputContainer: {
     flexDirection: 'row',
@@ -121,7 +124,8 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginTop: -10,
-    marginBottom: 10
+    marginBottom: 10,
+    width: "88%",
   },
   colorContainer: {
     flexDirection: 'row',
@@ -156,3 +160,4 @@ const styles = StyleSheet.create({
 });
 
 export default Start; // Exporting the Start component
+
