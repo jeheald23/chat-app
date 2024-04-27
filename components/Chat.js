@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
-// Import necessary modules and components
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomActions from './CustomActions'; // Importing custom actions component
+import CustomActions from './CustomActions'; 
 import MapView from 'react-native-maps';
 
 // Define the Chat component
@@ -159,3 +158,4 @@ const styles = StyleSheet.create({
 
 // Export the Chat component as default
 export default Chat;
+

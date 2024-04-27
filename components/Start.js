@@ -1,29 +1,31 @@
 import { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Alert, Platform, KeyboardAvoidingView } from 'react-native';  
-import { getAuth, signInAnonymously } from "firebase/auth"; // Import from Firebase Authentication
+import { getAuth, signInAnonymously } from "firebase/auth"; 
 
 const Start = ({ navigation }) => {
-  const auth = getAuth(); // Get authentication instance
+  const auth = getAuth(); 
   
-  const [name, setName] = useState(''); // State variable for user's name
-  const [background, setBackground] = useState(''); // State variable for background color
+  const [name, setName] = useState(''); // State variable for user's name 
+  const [background, setBackground] = useState(''); // State variable for background color 
 
   const signInUser = () => {
     signInAnonymously(auth)
       .then(result => {
+        // Navigate to the Chat screen with user data
         navigation.navigate("Chat", 
         {name: name,
          background: background,
          userID: result.user.uid });
+        // Show success message
         Alert.alert("Signed in Successfully!");
       })
       .catch((error) => {
+        // Show error message if sign-in fails
         Alert.alert("Unable to sign in, please try again later.");
       })
   }
 
-  // Image background for the Start screen
-  const image = require('../img/BackgroundImage.png');
+  const image = require('../img/BackgroundImage.png'); // Image background for the Start screen
 
   return (
       <View style={styles.container}>
@@ -35,11 +37,15 @@ const Start = ({ navigation }) => {
           <View style={styles.whiteContainer}>
             {/* Input field for user's name */}
             <View style={styles.inputContainer}>
+              {/* Label for the input field */}
+              <Text style={styles.inputLabel}>Your name</Text>
+              {/* Text input field */}
               <TextInput
                 style={styles.textInput}
                 value={name}
                 onChangeText={setName}
                 placeholder='Your name'
+                accessibilityLabel="Enter your name" // Accessibility label for screen readers
               />
             </View>
             {/* Text indicating to choose background color */}
@@ -50,36 +56,40 @@ const Start = ({ navigation }) => {
               <TouchableOpacity
                 style={[styles.color, { backgroundColor: '#090C08' }]}
                 onPress={() => setBackground('#090C08')}
+                accessibilityLabel="Black background" // Accessibility label for screen readers
               />
               <TouchableOpacity
                 style={[styles.color, { backgroundColor: '#474056' }]}
                 onPress={() => setBackground('#474056')}
+                accessibilityLabel="Dark gray background" // Accessibility label for screen readers
               />
               <TouchableOpacity
                 style={[styles.color, { backgroundColor: '#8A95A5' }]}
                 onPress={() => setBackground('#8A95A5')}
+                accessibilityLabel="Gray background" // Accessibility label for screen readers
               />
               <TouchableOpacity
                 style={[styles.color, { backgroundColor: '#B9C6AE' }]}
                 onPress={() => setBackground('#B9C6AE')}
+                accessibilityLabel="Light gray background" // Accessibility label for screen readers
               />
             </View>
-            
-             {/* Button to start chatting */}
-          <TouchableOpacity 
-            style={styles.startChattingButton}
-            onPress={signInUser} // Use signInUser function to sign in anonymously
-          >
-            <Text style={styles.buttonText}>Start Chatting</Text>
-          </TouchableOpacity>
-        </View>
-        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-      </ImageBackground>
-    </View>
+            {/* Button to start chatting */}
+            <TouchableOpacity 
+              style={styles.startChattingButton}
+              onPress={signInUser}
+              accessibilityLabel="Start Chatting" // Accessibility label for screen readers
+            >
+              <Text style={styles.buttonText}>Start Chatting</Text>
+            </TouchableOpacity>
+          </View>
+          {/* Apply keyboard avoiding behavior for Android */}
+          {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+        </ImageBackground>
+      </View>
   );
 }
 
-// Styles for the Start component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -127,6 +137,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: "88%",
   },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '300',
+    color: '#757083',
+    marginLeft: 10,
+    marginBottom: 5,
+  },
   colorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -159,5 +176,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Start; // Exporting the Start component
-
+export default Start;
