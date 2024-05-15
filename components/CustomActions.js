@@ -1,20 +1,19 @@
-// Import necessary components and modules from React Native and Expo
-import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
+import { TouchableOpacity, View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-// Define a functional component for custom actions
 const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
-  // Access the ActionSheet hook from Expo
   const actionSheet = useActionSheet();
+  const [uploading, setUploading] = useState(false); // State to manage uploading indicator
 
-  // Define the function to handle action press
   const onActionPress = () => {
     // Options for the action sheet
     const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
+
     // Show the action sheet with options
     actionSheet.showActionSheetWithOptions(
       {
@@ -38,29 +37,35 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     );
   };
 
-  // Generate a reference for the uploaded image
   const generateReference = (uri) => {
+    // Generate a unique reference for the uploaded image
     const imageName = uri.split("/")[uri.split("/").length - 1];
     const timeStamp = (new Date()).getTime();
     return `${userID}-${timeStamp}-${imageName}`;
   }
 
-  // Upload and send the selected image
   const uploadAndSendImage = async (imageURI) => {
+    setUploading(true); // Start the loading indicator
+
     const uniqueRefString = generateReference(imageURI);
     const newUploadRef = ref(storage, uniqueRefString);
     const response = await fetch(imageURI);
     const blob = await response.blob();
+
     // Upload the image to Firebase Storage and get the download URL
     uploadBytes(newUploadRef, blob).then(async (snapshot) => {
       const imageURL = await getDownloadURL(snapshot.ref)
       // Send the URL to the parent component
-      onSend({ image: imageURL })
+      onSend({ image: imageURL });
+      setUploading(false); // Stop the loading indicator after uploading
+    }).catch(error => {
+      console.error("Error uploading image:", error);
+      setUploading(false); // Stop the loading indicator if there's an error
     });
   }
 
-  // Function to pick an image from the device's library
   const pickImage = async () => {
+    // Function to pick an image from the device's library
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissions?.granted) {
       let result = await ImagePicker.launchImageLibraryAsync();
@@ -69,8 +74,8 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     }
   }
 
-  // Function to take a photo using the device's camera
   const takePhoto = async () => {
+    // Function to take a photo using the device's camera
     let permissions = await ImagePicker.requestCameraPermissionsAsync();
     if (permissions?.granted) {
       let result = await ImagePicker.launchCameraAsync();
@@ -79,8 +84,8 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     }
   }
 
-  // Function to get the current device location
   const getLocation = async () => {
+    // Function to get the current device location
     let permissions = await Location.requestForegroundPermissionsAsync();
     if (permissions?.granted) {
       const location = await Location.getCurrentPositionAsync({});
@@ -96,17 +101,26 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     } else Alert.alert("Permissions haven't been granted.");
   }
 
-  // Return the UI for the custom actions component
   return (
-    <TouchableOpacity style={styles.container} onPress={onActionPress}>
+    <TouchableOpacity 
+      accessible={true} 
+      accessibilityLabel="More options" 
+      accessibilityHint="Choose to send an image or your location." 
+      accessibilityRole="button" 
+      style={styles.container} 
+      onPress={onActionPress}
+    >
       <View style={[styles.wrapper, wrapperStyle]}>
-        <Text style={[styles.iconText, iconTextStyle]}>+</Text>
+        {uploading ? ( // Conditionally render the loading indicator
+          <ActivityIndicator size="small" color="#b2b2b2" />
+        ) : (
+          <Text style={[styles.iconText, iconTextStyle]}>+</Text>
+        )}
       </View>
     </TouchableOpacity>
   );
 }
 
-// Styles for the custom actions component
 const styles = StyleSheet.create({
   container: {
     width: 26,
@@ -119,6 +133,8 @@ const styles = StyleSheet.create({
     borderColor: '#b2b2b2',
     borderWidth: 2,
     flex: 1,
+    justifyContent: 'center', // Center the content vertically
+    alignItems: 'center', // Center the content horizontally
   },
   iconText: {
     color: '#b2b2b2',
@@ -129,5 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// Export the custom actions component as default
 export default CustomActions;

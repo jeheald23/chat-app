@@ -6,9 +6,15 @@ const Start = ({ navigation }) => {
   const auth = getAuth(); 
   
   const [name, setName] = useState(''); // State variable for user's name 
-  const [background, setBackground] = useState(''); // State variable for background color 
+  const [background, setBackground] = useState('#090C08'); // State variable for background color 
 
   const signInUser = () => {
+    // Check if the name input is empty
+    if (!name.trim()) {
+      Alert.alert("Please enter your name.");
+      return;
+    }
+
     signInAnonymously(auth)
       .then(result => {
         // Navigate to the Chat screen with user data
@@ -28,65 +34,76 @@ const Start = ({ navigation }) => {
   const image = require('../img/BackgroundImage.png'); // Image background for the Start screen
 
   return (
-      <View style={styles.container}>
-        {/* Image background for the Start screen */}
-        <ImageBackground source={image} style={styles.imageBackground} resizeMode='cover'>
-          {/* Title of the app */}
-          <Text style={styles.title}>Chat App</Text>
-          {/* Container for input fields and buttons */}
-          <View style={styles.whiteContainer}>
-            {/* Input field for user's name */}
-            <View style={styles.inputContainer}>
-              {/* Label for the input field */}
-              <Text style={styles.inputLabel}>Your name</Text>
-              {/* Text input field */}
-              <TextInput
-                style={styles.textInput}
-                value={name}
-                onChangeText={setName}
-                placeholder='Your name'
-                accessibilityLabel="Enter your name" // Accessibility label for screen readers
-              />
-            </View>
-            {/* Text indicating to choose background color */}
-            <Text style={styles.backgroundText}>Choose Background Color</Text>
-            {/* Container for selecting background colors */}
-            <View style={styles.colorContainer}>
-              {/* Color options as touchable components */}
-              <TouchableOpacity
-                style={[styles.color, { backgroundColor: '#090C08' }]}
-                onPress={() => setBackground('#090C08')}
-                accessibilityLabel="Black background" // Accessibility label for screen readers
-              />
-              <TouchableOpacity
-                style={[styles.color, { backgroundColor: '#474056' }]}
-                onPress={() => setBackground('#474056')}
-                accessibilityLabel="Dark gray background" // Accessibility label for screen readers
-              />
-              <TouchableOpacity
-                style={[styles.color, { backgroundColor: '#8A95A5' }]}
-                onPress={() => setBackground('#8A95A5')}
-                accessibilityLabel="Gray background" // Accessibility label for screen readers
-              />
-              <TouchableOpacity
-                style={[styles.color, { backgroundColor: '#B9C6AE' }]}
-                onPress={() => setBackground('#B9C6AE')}
-                accessibilityLabel="Light gray background" // Accessibility label for screen readers
-              />
-            </View>
-            {/* Button to start chatting */}
-            <TouchableOpacity 
-              style={styles.startChattingButton}
-              onPress={signInUser}
-              accessibilityLabel="Start Chatting" // Accessibility label for screen readers
-            >
-              <Text style={styles.buttonText}>Start Chatting</Text>
-            </TouchableOpacity>
+    <View style={styles.container}>
+      {/* Image background for the Start screen */}
+      <ImageBackground source={image} style={styles.imageBackground} resizeMode='cover'>
+        {/* Title of the app */}
+        <Text style={styles.title}>Chat App</Text>
+        {/* Container for input fields and buttons */}
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.whiteContainer}
+        >
+          {/* Input field for user's name */}
+          <View style={styles.inputContainer}>
+            {/* Text input field */}
+            <TextInput
+              style={styles.textInput}
+              value={name}
+              onChangeText={setName}
+              placeholder='Your name'
+              accessibilityLabel="Enter your name" // Accessibility label for screen readers
+            />
           </View>
-          {/* Apply keyboard avoiding behavior for Android */}
-          {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-        </ImageBackground>
-      </View>
+          {/* Text indicating to choose background color */}
+          <Text style={styles.backgroundText}>Choose Background Color</Text>
+          {/* Container for selecting background colors */}
+          <View style={styles.colorContainer}>
+            {/* Color options as touchable components */}
+            <TouchableOpacity
+              style={[styles.color, 
+                { backgroundColor: '#090C08' },
+                background === '#090C08' ? styles.selectedColor : null
+              ]}
+              onPress={() => setBackground('#090C08')}
+              accessibilityLabel="Black background" // Accessibility label for screen readers
+            />
+            <TouchableOpacity
+              style={[styles.color, 
+                { backgroundColor: '#474056' },
+                background === '#474056' ? styles.selectedColor : null
+              ]}
+              onPress={() => setBackground('#474056')}
+              accessibilityLabel="Dark gray background" // Accessibility label for screen readers
+            />
+            <TouchableOpacity
+              style={[styles.color, 
+                { backgroundColor: '#8A95A5' },
+                background === '#8A95A5' ? styles.selectedColor : null
+              ]}
+              onPress={() => setBackground('#8A95A5')}
+              accessibilityLabel="Gray background" // Accessibility label for screen readers
+            />
+            <TouchableOpacity
+              style={[styles.color, 
+                { backgroundColor: '#B9C6AE' },
+                background === '#B9C6AE' ? styles.selectedColor : null
+              ]}
+              onPress={() => setBackground('#B9C6AE')}
+              accessibilityLabel="Light gray background" // Accessibility label for screen readers
+            />
+          </View>
+          {/* Button to start chatting */}
+          <TouchableOpacity 
+            style={styles.startChattingButton}
+            onPress={signInUser}
+            accessibilityLabel="Start Chatting" // Accessibility label for screen readers
+          >
+            <Text style={styles.buttonText}>Start Chatting</Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </View>
   );
 }
 
@@ -109,6 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "space-evenly",
+    paddingBottom: Platform.OS === 'ios' ? 0 : 50 // Adjust paddingBottom for Android
   },
   title: {
     padding: '25%',
@@ -133,7 +151,7 @@ const styles = StyleSheet.create({
     padding: 18,
     marginLeft: 20,
     marginRight: 20,
-    marginTop: -10,
+    marginTop: 20,
     marginBottom: 10,
     width: "88%",
   },
@@ -173,7 +191,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600"
+  },
+  selectedColor: {
+    borderWidth: 2,
+    borderColor: 'red', // Choose a color for the indicator border
   }
 });
 
 export default Start;
+
+
